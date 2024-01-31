@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Page</title>
+    
+</head>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 20px;
+    }
+
+    h1 {
+        color: #333;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input {
+        width: 200px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    #searchResult {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .resultItem{
+        margin-top: 20px;
+        padding: 10px;
+    }
+
+    a {
+      color: #007bff; /* 文字颜色 */
+      text-decoration: none; /* 取消下划线 */
+      padding: 5px 10px; /* 内边距 */
+      border-bottom: 1px solid #007bff; /* 边框 */
+      border-radius: 5px; /* 圆角 */
+      background-color: #fff; /* 背景色 */
+      transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+    }
+
+    /* 悬停时的样式 */
+    a:hover {
+      background-color: #007bff; /* 悬停时的背景色 */
+      color: #fff; /* 悬停时的文字颜色 */
+    }
+</style>
+<body>
+    <h1>幻兽帕鲁配种路线查询</h1>
+
+    <!-- 搜索框1 -->
+    <label for="search1">起始帕鲁:</label>
+    <input type="text" id="search1" name="search1" placeholder="起始帕鲁">
+
+    <br>
+
+    <!-- 搜索框2 -->
+    <label for="search2">目标帕鲁:</label>
+    <input type="text" id="search2" name="search2" placeholder="目标帕鲁">
+
+    <br>
+
+    <!-- 搜索按钮 -->
+    <button onclick="search()">查询</button>
+
+    <h3>查询结果（点击结果中链接可以看到其他子路径）:</h3>
+    <div id = "searchResult"> 
+        
+    </div>
+</body>
+
+<script src="data.js"></script>
+
+<script src="graph.js"></script>
+
+<script>
+
+    init();
+
+    var start = "";
+    var end = "";
+
+    // JavaScript函数，处理搜索请求
+    function search() {
+        // 获取两个搜索框中的关键字
+        start = document.getElementById("search1").value;
+        end = document.getElementById("search2").value;
+        
+        findBfs(start,end)
+        document.getElementById("searchResult").innerHTML="";
+
+        if (routes.length > 0){
+            let i = 0
+            routes.forEach(r => {
+                showResult(end, r)
+            });
+
+        }
+        else {
+            document.getElementById("searchResult").innerHTML="没有找到结果";
+        }
+
+    }
+
+    function showOtherResult(name, bl){
+        if (bl && bl.length > 0){
+            bl.forEach(list => {
+                let l = JSON.parse(JSON.stringify(list))
+                l.push(name)
+                showResult(name, l)
+            });
+        }
+        else{
+            var resultDiv = document.createElement("div");
+            resultDiv.className = "resultItem";
+            resultDiv.innerHTML = "未找到其他从" + start + "通往" + name + "且不经过目标点的子路径,可以直接以此为目标点重新搜索";
+            document.getElementById("searchResult").appendChild(resultDiv);
+        }
+    }
+
+    function showResult(name, r){
+
+        if (r){
+            var resultDiv = document.createElement("div");
+            resultDiv.className = "resultItem";
+            resultDiv.innerHTML = name + "结果：" + showPath(r);
+            document.getElementById("searchResult").appendChild(resultDiv);
+        }
+        else {
+            var resultDiv = document.createElement("div");
+            resultDiv.className = "resultItem";
+            resultDiv.innerHTML = "未找到其他从" + start + "通往" + name + "的路径";
+            document.getElementById("searchResult").appendChild(resultDiv);
+        }
+
+     
+       
+    }
+
+    
+</script>
+</html>
